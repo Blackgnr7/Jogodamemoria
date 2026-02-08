@@ -2,6 +2,7 @@ package com.example.jogodamemoria
 
 import android.animation.ValueAnimator
 import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.media.SoundPool
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
@@ -13,6 +14,9 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var soundPool: SoundPool
+    private var efeito = 0
     var duracao: Long = 0
     val lista_certa = mutableListOf<String>()
     var pontuação: Int = 0
@@ -23,6 +27,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        soundPool = SoundPool.Builder()
+            .setMaxStreams(1)
+            .build()
+        efeito = soundPool.load(this, R.raw.efeito_sonoro, 1)
         binding.botaodejogar.setOnClickListener {
             binding.botaodejogar.visibility = View.INVISIBLE
             binding.modos.visibility = View.VISIBLE
@@ -52,6 +60,7 @@ class MainActivity : ComponentActivity() {
             duracao = 500
         }
         binding.red.setOnClickListener {
+            soundPool.play(efeito, 1f,1f,1,0,1f)
             if (lista_certa[position_atual] == "red") {
                 position_atual += 1
                 if (lista_certa.size == position_atual) {
@@ -60,13 +69,13 @@ class MainActivity : ComponentActivity() {
                     change_text()
                     desligar()
                     add()
-                    ligar()
                 }
             } else {
                 lifecycleScope.launch { game_over() }
             }
         }
         binding.green.setOnClickListener {
+            soundPool.play(efeito, 1f,1f,1,0,1f)
             if (lista_certa[position_atual] == "green") {
                 position_atual += 1
                 if (lista_certa.size == position_atual) {
@@ -75,13 +84,13 @@ class MainActivity : ComponentActivity() {
                     change_text()
                     desligar()
                     add()
-                    ligar()
                 }
             } else {
                 lifecycleScope.launch { game_over() }
             }
         }
         binding.blue.setOnClickListener {
+            soundPool.play(efeito, 1f,1f,1,0,1f)
             if (lista_certa[position_atual] == "blue") {
                 position_atual += 1
                 if (lista_certa.size == position_atual) {
@@ -90,13 +99,13 @@ class MainActivity : ComponentActivity() {
                     change_text()
                     desligar()
                     add()
-                    ligar()
                 }
             } else {
                 lifecycleScope.launch { game_over()}
             }
         }
         binding.yellow.setOnClickListener {
+            soundPool.play(efeito, 1f,1f,1,0,1f)
             if (lista_certa[position_atual] == "yellow") {
                 position_atual += 1
                 if (lista_certa.size == position_atual) {
@@ -105,7 +114,6 @@ class MainActivity : ComponentActivity() {
                     change_text()
                     desligar()
                     add()
-                    ligar()
                 }
             } else {
                 lifecycleScope.launch { game_over() }
@@ -123,7 +131,6 @@ class MainActivity : ComponentActivity() {
                 if (textView.text.toString().toInt() == 0) {
                     binding.contador.visibility = View.INVISIBLE
                     add()
-                    ligar()
                 }
             }
         })
@@ -200,15 +207,17 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+            ligar()
         }
     }
 
-    suspend fun animarBotao( button: View, ) {
+    suspend fun animarBotao( button: View, ){
         button.isPressed = false
 
         delay(duracao)
 
         button.isPressed = true
+        soundPool.play(efeito, 1f,1f,1,0,1f)
 
         delay(duracao)
 
